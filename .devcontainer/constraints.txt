@@ -1,0 +1,1 @@
+agent-framework-azure-ai @ git+https://github.com/microsoft/agent-framework.git@main#subdirectory=python/packages/azure-ai
