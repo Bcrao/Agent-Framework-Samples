@@ -1,3 +1,5 @@
+好的，这是更新后的 `README.md` 文件，其中包含了来自 `01-python-agent-framework-aifoundry-mcp.ipynb` 文件的 Python 示例代码。
+
 # Tutorial: Creating MCP and A2A Applications in Agent Framework
 
 This tutorial will guide you through the concepts and practical examples of creating applications using the Model Context Protocol (MCP) and Agent-to-Agent (A2A) patterns within the Agent Framework. We will use the provided .NET and Python code samples to illustrate how to connect an agent to an external toolset via MCP.
