@@ -1,5 +1,3 @@
-好的，这是更新后的 `README.md` 文件，其中包含了来自 `01-python-agent-framework-aifoundry-mcp.ipynb` 文件的 Python 示例代码。
-
 # Tutorial: Creating MCP and A2A Applications in Agent Framework
 
 This tutorial will guide you through the concepts and practical examples of creating applications using the Model Context Protocol (MCP) and Agent-to-Agent (A2A) patterns within the Agent Framework. We will use the provided .NET and Python code samples to illustrate how to connect an agent to an external toolset via MCP.
@@ -177,4 +175,5 @@ For example, a "Travel Planner" agent could delegate tasks by calling a "Flight 
 
   * **Task Delegation and Orchestration:** A primary "manager" agent can break down a complex user request into sub-tasks and assign them to different "worker" agents.
   * **Specialized Expertise:** A generalist agent can consult a specialist agent for deep knowledge in a specific area (e.g., a "General Support" agent calling a "Billing Expert" agent).
+
   * **Collaborative Problem-Solving:** Multiple agents can work together, sharing information and intermediate results to solve a problem that would be too complex for a single agent.
