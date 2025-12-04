@@ -13,16 +13,33 @@ class MarketingStrategy(BaseModel):
 
     model_config = ConfigDict(extra="ignore")
 
-    topic: str = Field(..., description="User supplied topic for the campaign.")
+    topic: str = Field(default="", description="User supplied topic for the campaign.")
     user_intent: str = Field(default="", description="Analysis of user's original intent, goals, and what they want to achieve")
     output_language: str = Field(default="en", description="Language code for all outputs, detected from user input (e.g., 'en', 'zh', 'ja', 'ko', 'es', 'fr').")
-    target_audience: str = Field(..., description="Persona or ICP summary.")
+    target_audience: str = Field(default="", description="Persona or ICP summary.")
     pain_points: List[str] = Field(default_factory=list, description="Ordered list of customer pains.")
     selling_points: List[str] = Field(default_factory=list, description="Differentiated value props.")
     content_framework: List[str] = Field(default_factory=list, description="Story beats or outline segments.")
-    tone_of_voice: str = Field(..., description="Tone guidance for downstream assets.")
+    tone_of_voice: str = Field(default="", description="Tone guidance for downstream assets.")
     brand_pillars: List[str] = Field(default_factory=list, description="Anchor themes to repeat across channels.")
     keywords: List[str] = Field(default_factory=list, description="SEO or creative keywords to reuse.")
+
+
+class EmailCampaign(BaseModel):
+    """Email campaign content for nurture sequences."""
+
+    model_config = ConfigDict(extra="ignore")
+
+    subject_lines: List[str] = Field(default_factory=list, description="3-5 A/B testable subject line variations.")
+    preview_text: str = Field(default="", description="Email preview/preheader text (50-100 chars).")
+    email_type: str = Field(default="promotional", description="Type: welcome, promotional, nurture, announcement, etc.")
+    headline: str = Field(default="", description="Main headline in email body.")
+    body_html: str = Field(default="", description="Email body content in HTML format with inline styles.")
+    body_plain: str = Field(default="", description="Plain text version of email body.")
+    cta_button_text: str = Field(default="", description="Primary CTA button text.")
+    cta_url_placeholder: str = Field(default="{{CTA_URL}}", description="Placeholder for CTA link.")
+    ps_line: Optional[str] = Field(default=None, description="Optional P.S. line for additional urgency/hook.")
+    segment_notes: Optional[str] = Field(default=None, description="Notes on which audience segment this email targets.")
 
 
 class SocialPost(BaseModel):
@@ -79,10 +96,11 @@ class CopywritingContent(BaseModel):
 
     model_config = ConfigDict(extra="ignore")
 
-    hero_message: str = Field(..., description="One sentence elevator pitch.")
+    hero_message: str = Field(default="", description="One sentence elevator pitch.")
     social_posts: List[SocialPost] = Field(default_factory=list)
+    email_campaign: Optional[EmailCampaign] = Field(default=None, description="Email campaign content for marketing automation.")
     blog_outline: List[str] = Field(default_factory=list, description="Ordered outline for the long-form asset.")
-    blog_article: str = Field(..., description="Full blog/long-form draft in markdown.")
+    blog_article: str = Field(default="", description="Full blog/long-form draft in markdown.")
     pain_point_analysis: List[str] = Field(default_factory=list, description="Problem/solution bullets.")
     cta_variations: List[str] = Field(default_factory=list, description="List of CTA options for experimentation.")
 
@@ -92,8 +110,8 @@ class ImagePrompt(BaseModel):
 
     model_config = ConfigDict(extra="ignore")
 
-    prompt_id: str = Field(..., description="Stable identifier used for matching assets.")
-    prompt: str = Field(..., description="The actual text prompt to feed the image model.")
+    prompt_id: str = Field(default="", description="Stable identifier used for matching assets.")
+    prompt: str = Field(default="", description="The actual text prompt to feed the image model.")
     scene_description: str = Field(default="", description="Plain language paraphrase for humans.")
     style: str = Field(default="cinematic", description="Visual direction (e.g., cinematic, minimal).")
     aspect_ratio: str = Field(default="1:1", description="Aspect ratio guidance.")
@@ -104,8 +122,8 @@ class GeneratedImage(BaseModel):
 
     model_config = ConfigDict(extra="ignore")
 
-    prompt_id: str = Field(...)
-    url: str = Field(..., description="URL or local file reference to the rendered image.")
+    prompt_id: str = Field(default="")
+    url: str = Field(default="", description="URL or local file reference to the rendered image.")
     local_path: Optional[str] = Field(default=None, description="Local filesystem path.")
     revised_prompt: Optional[str] = Field(None, description="Model-adjusted prompt text.")
     prompt: Optional[str] = Field(default=None, description="Original prompt used.")
@@ -125,7 +143,7 @@ class VideoScene(BaseModel):
 
     model_config = ConfigDict(extra="ignore")
 
-    scene_number: int = Field(...)
+    scene_number: int = Field(default=0)
     act: str = Field(default="", description="Problem / Solution / Transformation")
     visuals: str = Field(default="", description="Camera + action direction.")
     voiceover: str = Field(default="", description="Narration copy.")

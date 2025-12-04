@@ -350,8 +350,8 @@ class _PackagingExecutor(Executor):
         topic = self._extract_topic(conversation)
         strategy = self._extract_model(conversation, self._agent_names["strategy"], MarketingStrategy)
         copywriting = self._extract_model(conversation, self._agent_names["copywriting"], CopywritingContent)
-        images = self._extract_model(conversation, self._agent_names["image"], ImageContent)
-        video = self._extract_model(conversation, self._agent_names["video"], VideoScript)
+        images = self._extract_model(conversation, self._agent_names["image"], ImageContent, allow_empty=True)
+        video = self._extract_model(conversation, self._agent_names["video"], VideoScript, allow_empty=True)
 
         campaign_id = slugify(f"{topic}-{strategy.target_audience}")
         return CampaignPackage(
@@ -370,15 +370,54 @@ class _PackagingExecutor(Executor):
                 return message.text.strip()
         raise ValueError("User topic not found in the conversation history.")
 
-    def _extract_model(self, conversation: list[ChatMessage], author_name: str, model_cls: type[Any]) -> Any:
-        raw_text = self._extract_message_text(conversation, author_name)
-        payload = extract_json_object(raw_text)
-        return model_cls.model_validate_json(payload)
+    def _extract_model(self, conversation: list[ChatMessage], author_name: str, model_cls: type[Any], allow_empty: bool = False) -> Any:
+        """Extract and parse a model from agent output.
+        
+        Args:
+            conversation: The conversation history
+            author_name: Name of the agent whose output to extract
+            model_cls: Pydantic model class to parse into
+            allow_empty: If True, return empty model on failure instead of raising
+            
+        Returns:
+            Parsed model instance
+            
+        Raises:
+            ValueError: If parsing fails and allow_empty is False
+        """
+        try:
+            raw_text = self._extract_message_text(conversation, author_name)
+            payload = extract_json_object(raw_text)
+            return model_cls.model_validate_json(payload)
+        except Exception as e:
+            # Catch ALL exceptions (ValueError, ValidationError, JSONDecodeError, etc.)
+            if allow_empty:
+                import sys
+                print(f"[WARNING] Failed to parse {model_cls.__name__} from {author_name}: {e}", file=sys.stderr)
+                print(f"[WARNING] Using empty {model_cls.__name__}", file=sys.stderr)
+                return model_cls()
+            # Re-raise with more context
+            raise ValueError(f"Failed to parse {model_cls.__name__} from {author_name}: {e}") from e
 
     def _extract_message_text(self, conversation: list[ChatMessage], author_name: str) -> str:
         for message in reversed(conversation):
             if message.role == Role.ASSISTANT and (message.author_name or "") == author_name:
-                if not message.text:
-                    raise ValueError(f"Message from {author_name} is empty")
-                return message.text
+                # Try to get text content
+                text = message.text
+                if text:
+                    return text
+                
+                # If text is empty, try to extract from contents
+                if message.contents:
+                    from agent_framework import TextContent
+                    for content in message.contents:
+                        if isinstance(content, TextContent) and content.text:
+                            return content.text
+                        # Also check for dict-style content
+                        if isinstance(content, dict) and content.get("type") == "text":
+                            text_val = content.get("text", "")
+                            if text_val:
+                                return text_val
+                
+                raise ValueError(f"Message from {author_name} is empty")
         raise ValueError(f"Missing assistant output from {author_name}")

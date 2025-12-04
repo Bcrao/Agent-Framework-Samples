@@ -7,7 +7,7 @@ A multi-agent automated marketing content generation system built on [Microsoft 
 > **From idea to campaign in minutes**: Enter a product/topic, get publish-ready marketing materials automatically.
 
 ```
-📝 Input: "ESP32 AI Embodied Intelligence Educational Product"
+📝 Input: "AI Fitness Coach"
      ↓
 🤖 4 Specialized Agents + Real-time Web Research
      ↓
@@ -30,6 +30,7 @@ A multi-agent automated marketing content generation system built on [Microsoft 
 | | Social Posts (LinkedIn) | Professional tone post with hook, body, and CTA |
 | | Social Posts (Instagram) | Visual-focused post with hashtags |
 | | Social Posts (Rednote) | Authentic recommendation-style post |
+| | Email Campaign | A/B testable subject lines, HTML/plain text body, CTA button, P.S. line |
 | | Pain Point Analysis | Problem → Solution format analysis |
 | | CTA Variations | Multiple call-to-action options (direct, curiosity, interactive) |
 | **🖼️ Images** | Image Prompts | Detailed prompts for AI image generation (English) |
@@ -114,7 +115,7 @@ flowchart TB
 
 ```bash
 pip install -r requirements.txt
-pip install agent-framework --pre  # or install from source
+pip install agent-framework --pre # or install from source
 ```
 
 ### 2. Configure Environment Variables
@@ -152,16 +153,16 @@ AZURE_VIDEO_DEPLOYMENT_NAME=sora-2
 
 ```bash
 # Basic mode
-python -m marketing_workflow.cli "ESP32 AI Embodied Intelligence Educational Product"
+python -m marketing_workflow.cli "AI Fitness Coach"
 
 # Deep research mode: multi-round web search + data-driven strategy
-python -m marketing_workflow.cli "ESP32 AI Embodied Intelligence Educational Product" --deep-research
+python -m marketing_workflow.cli "AI Fitness Coach" --deep-research
 
 # Full generation: including AI images and videos
-python -m marketing_workflow.cli "ESP32 AI Embodied Intelligence Educational Product" --enable-image-gen --enable-video-gen
+python -m marketing_workflow.cli "AI Fitness Coach" --enable-image-gen --enable-video-gen
 
 # Debug mode
-python -m marketing_workflow.cli "ESP32 AI Embodied Intelligence Educational Product" --debug
+python -m marketing_workflow.cli "AI Fitness Coach" --debug
 ```
 
 ## CLI Options
@@ -214,7 +215,7 @@ workflow = AgenticMarketingWorkflow(
     ),
 )
 
-package = await workflow.run("ESP32 AI Embodied Intelligence Educational Product")
+package = await workflow.run("AI Fitness Coach")
 print(package.copywriting.hero_message)
 ```
 

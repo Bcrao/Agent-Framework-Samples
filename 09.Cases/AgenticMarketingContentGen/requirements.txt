@@ -12,6 +12,12 @@ python-dotenv>=1.0.0
 openai>=1.0.0,<2.0.0
 azure-identity>=1.15.0
 
+# Web search (market research)
+tavily-python>=0.5.0
+
+# HTTP requests (for video generation API)
+requests>=2.31.0
+
 # Optional: for running CLI
 # argparse is stdlib, no extra install needed
 

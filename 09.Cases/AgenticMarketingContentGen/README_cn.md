@@ -7,7 +7,7 @@
 > **从想法到全套内容**：输入一个产品/话题，自动生成可直接发布的全套营销物料。
 
 ```
-📝 输入: "ESP32 AI 具身智能教育产品"
+📝 输入: "AI 健身教练"
      ↓
 🤖 4个专业 Agent 协作 + 实时网络调研
      ↓
@@ -31,6 +31,7 @@
 |                     | 社交帖子 (LinkedIn)     | 专业风格帖子，正文、CTA                                            |
 |                     | 社交帖子 (Instagram)    | 视觉导向帖子                                                       |
 |                     | 社交帖子 (小红书)       | 种草文风格，第一人称真实体验感                                     |
+|                     | 邮件营销                | A/B 测试标题、HTML/纯文本正文、CTA 按钮、P.S. 附言                 |
 |                     | 痛点分析                | 「痛点 → 解决方案」格式                                           |
 |                     | CTA 变体                | 多种行动号召风格（直接型、好奇型、互动型）                         |
 | **🖼️ 图像** | 图像提示词              | AI 图像生成的详细 prompt（英文）                                   |
@@ -115,7 +116,7 @@ flowchart TB
 
 ```bash
 pip install -r requirements.txt
-pip install agent-framework --pre  # 或从源码安装
+pip install agent-framework --pre # 或从源码安装
 ```
 
 ### 2. 配置环境变量
@@ -155,16 +156,16 @@ AZURE_VIDEO_DEPLOYMENT_NAME=sora-2
 
 ```bash
 # 基础模式
-python -m marketing_workflow.cli "ESP32 AI 具身智能教育产品"
+python -m marketing_workflow.cli "AI 健身教练"
 
 # 深度研究模式：多轮 web 搜索 + 数据驱动策略
-python -m marketing_workflow.cli "ESP32 AI 具身智能教育产品" --deep-research
+python -m marketing_workflow.cli "AI 健身教练" --deep-research
 
 # 完整生成：包含 AI 图像和视频
-python -m marketing_workflow.cli "ESP32 AI 具身智能教育产品" --enable-image-gen --enable-video-gen
+python -m marketing_workflow.cli "AI 健身教练" --enable-image-gen --enable-video-gen
 
 # 调试模式
-python -m marketing_workflow.cli "ESP32 AI 具身智能教育产品" --debug
+python -m marketing_workflow.cli "AI 健身教练" --debug
 ```
 
 ## CLI 选项
@@ -217,7 +218,7 @@ workflow = AgenticMarketingWorkflow(
     ),
 )
 
-package = await workflow.run("ESP32 AI 具身智能教育产品")
+package = await workflow.run("AI 健身教练")
 print(package.copywriting.hero_message)
 ```
 

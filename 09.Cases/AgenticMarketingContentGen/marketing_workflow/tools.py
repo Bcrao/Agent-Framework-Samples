@@ -62,32 +62,46 @@ class TavilySearchTools:
         max_results: int = 5,
     ) -> dict[str, Any]:
         """Internal method to perform web search."""
-        client = self._get_client()
-        
-        # Clamp max_results to valid range
-        max_results = max(1, min(10, max_results))
-        
-        response = client.search(
-            query=query,
-            search_depth=search_depth,
-            max_results=max_results,
-        )
-        
-        # Format results for agent consumption
-        results = []
-        for item in response.get("results", []):
-            results.append({
-                "title": item.get("title", ""),
-                "url": item.get("url", ""),
-                "content": item.get("content", ""),
-                "score": item.get("score", 0),
-            })
-        
-        return {
-            "query": query,
-            "results": results,
-            "answer": response.get("answer", ""),
-        }
+        try:
+            client = self._get_client()
+            
+            # Clamp max_results to valid range
+            max_results = max(1, min(10, max_results))
+            
+            response = client.search(
+                query=query,
+                search_depth=search_depth,
+                max_results=max_results,
+            )
+            
+            # Format results for agent consumption
+            results = []
+            for item in response.get("results", []):
+                results.append({
+                    "title": item.get("title", ""),
+                    "url": item.get("url", ""),
+                    "content": item.get("content", ""),
+                    "score": item.get("score", 0),
+                })
+            
+            return {
+                "query": query,
+                "results": results,
+                "answer": response.get("answer", ""),
+            }
+        except Exception as e:
+            # Return error info instead of raising exception
+            # This allows the agent to handle the error gracefully
+            error_msg = str(e)
+            if len(error_msg) > 300:
+                error_msg = error_msg[:300] + "..."
+            
+            return {
+                "query": query,
+                "error": f"Web search failed: {error_msg}",
+                "results": [],
+                "answer": "",
+            }
 
 
 class SoraVideoGenerationTools:
@@ -557,6 +571,25 @@ class PackagingTools:
         dump_json(package.copywriting.blog_outline, copy_dir / "blog_outline.json")
         dump_json(package.copywriting.pain_point_analysis, copy_dir / "pain_point_analysis.json")
         dump_json(package.copywriting.cta_variations, copy_dir / "cta_variations.json")
+        
+        # Email campaign assets
+        if package.copywriting.email_campaign:
+            email_dir = ensure_directory(copy_dir / "email")
+            email = package.copywriting.email_campaign
+            
+            # Save complete JSON data
+            dump_json(email.model_dump(exclude_none=True), email_dir / "email_campaign.json")
+            
+            # Save HTML email (ready for email clients)
+            html_email = self._format_email_html(email)
+            (email_dir / "email_campaign.html").write_text(html_email, encoding="utf-8")
+            
+            # Save plain text version
+            (email_dir / "email_campaign.txt").write_text(email.body_plain or "", encoding="utf-8")
+            
+            # Save subject lines for A/B testing
+            if email.subject_lines:
+                (email_dir / "subject_lines.txt").write_text("\n".join(email.subject_lines), encoding="utf-8")
 
         # Image assets
         dump_json([prompt.model_dump(exclude_none=True) for prompt in package.images.prompts], img_dir / "prompts.json")
@@ -598,6 +631,83 @@ class PackagingTools:
         lines.extend(["", "## Keywords"])
         lines.append(", ".join(strategy.keywords))
         return "\n".join(lines)
+    
+    def _format_email_html(self, email) -> str:
+        """Format email campaign as a complete HTML email document.
+        
+        Creates an email-client compatible HTML file with:
+        - Proper DOCTYPE and meta tags for email rendering
+        - Inline CSS (email clients strip external styles)
+        - Responsive table-based layout
+        - Preview text hidden but accessible to email clients
+        """
+        subject = email.subject_lines[0] if email.subject_lines else "Marketing Email"
+        preview = email.preview_text or ""
+        
+        return f'''<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:v="urn:schemas-microsoft-com:vml" xmlns:o="urn:schemas-microsoft-com:office:office">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="x-apple-disable-message-reformatting">
+    <title>{subject}</title>
+    <!--[if mso]>
+    <noscript>
+        <xml>
+            <o:OfficeDocumentSettings>
+                <o:PixelsPerInch>96</o:PixelsPerInch>
+            </o:OfficeDocumentSettings>
+        </xml>
+    </noscript>
+    <![endif]-->
+    <style type="text/css">
+        /* Reset styles */
+        body, table, td, a {{ -webkit-text-size-adjust: 100%; -ms-text-size-adjust: 100%; }}
+        table, td {{ mso-table-lspace: 0pt; mso-table-rspace: 0pt; }}
+        img {{ -ms-interpolation-mode: bicubic; border: 0; height: auto; line-height: 100%; outline: none; text-decoration: none; }}
+        body {{ margin: 0 !important; padding: 0 !important; width: 100% !important; }}
+        a[x-apple-data-detectors] {{ color: inherit !important; text-decoration: none !important; font-size: inherit !important; font-family: inherit !important; font-weight: inherit !important; line-height: inherit !important; }}
+        /* Mobile styles */
+        @media screen and (max-width: 600px) {{
+            .email-container {{ width: 100% !important; margin: auto !important; }}
+            .stack-column, .stack-column-center {{ display: block !important; width: 100% !important; max-width: 100% !important; direction: ltr !important; }}
+        }}
+    </style>
+</head>
+<body style="margin: 0; padding: 0; background-color: #f4f4f4;">
+    <!-- Preview text (hidden but shown in email client preview) -->
+    <div style="display: none; font-size: 1px; line-height: 1px; max-height: 0px; max-width: 0px; opacity: 0; overflow: hidden; mso-hide: all;">
+        {preview}
+    </div>
+    
+    <!-- Email wrapper -->
+    <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="background-color: #f4f4f4;">
+        <tr>
+            <td style="padding: 20px 0;">
+                <!-- Email container -->
+                <table class="email-container" role="presentation" cellspacing="0" cellpadding="0" border="0" width="600" style="margin: 0 auto; background-color: #ffffff;">
+                    <!-- Email body -->
+                    <tr>
+                        <td style="padding: 30px 40px;">
+                            {email.body_html or ""}
+                        </td>
+                    </tr>
+                    <!-- Footer -->
+                    <tr>
+                        <td style="padding: 20px 40px; background-color: #f8f8f8; border-top: 1px solid #e0e0e0;">
+                            <p style="margin: 0; font-family: Arial, sans-serif; font-size: 12px; color: #888888; text-align: center;">
+                                You received this email because you subscribed to our newsletter.<br>
+                                <a href="{{{{UNSUBSCRIBE_URL}}}}" style="color: #888888;">Unsubscribe</a> | <a href="{{{{PREFERENCES_URL}}}}" style="color: #888888;">Update preferences</a>
+                            </p>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+</body>
+</html>'''
 
 
 async def maybe_await(value: Any) -> Any:

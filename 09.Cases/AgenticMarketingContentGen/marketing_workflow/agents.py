@@ -187,6 +187,16 @@ Build your content using these strategy inputs:
 
 **hero_message**: One compelling sentence that captures the core value
 
+**email_campaign**: Create a complete email for marketing automation:
+- subject_lines: 3-5 A/B testable variations (use curiosity, urgency, or benefit-driven approaches)
+- preview_text: Compelling preheader text (50-100 chars)
+- email_type: "promotional", "welcome", "nurture", or "announcement"
+- headline: Bold, benefit-focused headline
+- body_html: Full email body with HTML formatting (use inline styles)
+- body_plain: Plain text version for accessibility
+- cta_button_text: Action-oriented button text
+- ps_line: Optional P.S. for urgency or bonus info
+
 **pain_point_analysis**: Map each pain point to its solution
 
 **cta_variations**: Provide 4-6 different call-to-action options
