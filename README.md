@@ -2,6 +2,7 @@
 
 A comprehensive hands-on guide to building intelligent agents using the Microsoft Agent Framework. This repository contains practical examples, tutorials, and code samples that demonstrate how to create powerful AI agents using both Python and .NET implementations.
 
+
 ## 🚀 What You'll Learn
 
 This repository provides step-by-step tutorials and real-world examples covering:
@@ -35,6 +36,10 @@ This repository provides step-by-step tutorials and real-world examples covering
 ***Note: This is installation guideline***
 
 > ⚠️ **Important Notice**: Microsoft Agent Framework is currently in the **development/preview stage**. Since the framework APIs and features may change frequently, **we strongly recommend building from source** rather than using NuGet packages to ensure you have the latest updates and bug fixes.
+
+> 📌 **Additional Notes**: 
+> 1. The examples in this repository are primarily based on **GitHub Models** and **Microsoft Foundry**. You can access GitHub Models directly at https://gh.io/models
+> 2. **Microsoft Foundry Agent Service** uses the **V2 version**. Please access it at https://ai.azure.com and select **V2** when creating or managing your Microsoft Foundry projects.
 
 ### Python Environment
 - Python 3.10 or higher
