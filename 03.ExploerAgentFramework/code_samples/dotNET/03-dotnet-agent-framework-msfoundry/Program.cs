@@ -16,11 +16,15 @@ AIProjectClient aiProjectClient = new(
     new Uri(endpoint),
     new AzureCliCredential());
 
-AgentVersionCreationOptions options = new(new PromptAgentDefinition(model: deploymentName) { Instructions = "You are good at telling jokes." });
-AgentVersion createdAgentVersion = aiProjectClient.Agents.CreateAgentVersion(agentName: "Agent-Framework", options);
 
-
-AIAgent agent = aiProjectClient.GetAIAgent(createdAgentVersion);
+AIAgent agent = await aiProjectClient.CreateAIAgentAsync(
+    name: "Agent-Framework",
+    creationOptions: new AgentVersionCreationOptions(
+        new PromptAgentDefinition(model: deploymentName)
+        {
+            Instructions = "You are good at telling jokes."
+        })
+);
 
 
 Console.WriteLine(await agent.RunAsync("Write a haiku about Agent Framework"));

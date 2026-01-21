@@ -9,10 +9,7 @@ using Microsoft.Agents.AI;
 using Microsoft.Extensions.AI;
 using OpenAI.Assistants;
 using OpenAI.Responses;
- using DotNetEnv;
-
-using OpenAI.Assistants;
-using OpenAI.Responses;
+using DotNetEnv;
 
 
  Env.Load("../../../../../.env");

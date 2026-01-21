@@ -31,11 +31,16 @@ AIProjectClient aiProjectClient = new(
     new Uri(azure_foundry_endpoint),
     new AzureCliCredential());
 
-AgentVersionCreationOptions options = new(new PromptAgentDefinition(model: azure_foundry_model_id) { Instructions = AgentInstructions });
-AgentVersion createdAgentVersion = aiProjectClient.Agents.CreateAgentVersion(agentName: AgentName, options);
 
+AIAgent agent = await aiProjectClient.CreateAIAgentAsync(
+    name: AgentName,
+    creationOptions: new AgentVersionCreationOptions(
+        new PromptAgentDefinition(model: azure_foundry_model_id)
+        {
+            Instructions = AgentInstructions
+        })
+);
 
-AIAgent agent = aiProjectClient.GetAIAgent(createdAgentVersion);
 
 ChatMessage userMessage = new ChatMessage(ChatRole.User, [
 	new TextContent("Can you identify the furniture items in this image and suggest which ones would fit well in a modern living room?"), new DataContent(imageBytes, "image/png")
