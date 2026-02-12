@@ -1,4 +1,4 @@
-# How to Use an Microsoft Foundry Local to Build a Deep Research Scenario
+# How to Use Microsoft Foundry Local to Build a Deep Research Scenario
 
 ![bg](./imgs/bg.png)
 
